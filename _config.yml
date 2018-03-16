@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: ymgjxsd2011@163.com
 description: "关于后端与云存储、厨师与运动员 | 殷明刚，Cloud Storge & Mobile Lover，R&D Engineer | 这里是 @Starfish 殷明刚 的个人博客，与你一起发现更大的世界。"
 keyword: "殷明刚, Starfish @Starfish, 殷明刚的博客, YMG Blog, 博客, 个人网站, 云计算，云存储，篮球，羽毛球，足球，学做饭"
-url: ""              # your host, for absolute URL
+url: "yinminggang.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
