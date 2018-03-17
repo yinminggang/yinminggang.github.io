@@ -120,9 +120,354 @@ line140，调节采样运行时间（无需太短或长），据说单位为秒�
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/threads_info1.png)
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/threads_info2.png)
 
-接着，贴出6个较为耗资源的线程的结果：`Thread: 2===21792===rokcsdb::bg0、Thread: 28===8109===tp_osd_tp、Thread: 51===7973===bstore_kv_final、Thread: 52===7972===bstore_kv_sync、Thread: 53===7971===finisher、Thread: 68===7926===msgr_worker_0`，可以看出哪些函数较为消耗资源，如下所示：
+接着，贴出6个较为耗资源的线程的结果：`Thread: 2===21792===rokcsdb::bg0、Thread: 28===8109===tp_osd_tp、Thread: 51===7973===bstore_kv_final、Thread: 52===7972===bstore_kv_sync、Thread: 53===7971===finisher、Thread: 68===7926===msgr_worker_0`，可以看出哪些函数较为消耗资源，由于结果较长，部分如下所示：
+```
+{
+  Thread: 2===21792===rokcsdb::bg0
 
-具体文件可下载附件中文件1-image-important-threads.txt
++ 100.00% clone
+  + 100.00% start_thread
+    + 100.00% None
+      + 100.00% rocksdb::ThreadPoolImpl::Impl::BGThreadWrapper
+        + 100.00% rocksdb::ThreadPoolImpl::Impl::BGThread
+          + 69.00% rocksdb::DBImpl::BackgroundCallCompaction
+          | + 69.00% rocksdb::DBImpl::BackgroundCompaction
+          |   + 69.00% rocksdb::CompactionJob::Run
+          |     + 69.00% rocksdb::CompactionJob::ProcessKeyValueCompaction
+          |       + 56.80% rocksdb::CompactionIterator::Next
+          |       | + 42.20% rocksdb::MergingIterator::Next
+          |       | | + 42.00% Next
+          |       | | | + 25.00% b::(anonymous namespace)::TwoLevelIterator::Next
+          |       | | | | + 25.00% Next
+          |       | | | |   + 24.40% b::(anonymous namespace)::TwoLevelIterator::SkipEmptyDataBlocksForward
+          |       | | | |   | + 24.40% b::(anonymous namespace)::TwoLevelIterator::InitDataBlock
+          |       | | | |   |   + 24.20% rocksdb::BlockBasedTable::BlockEntryIteratorState::NewSecondaryIterator
+          |       | | | |   |   | + 24.20% rocksdb::BlockBasedTable::NewDataBlockIterator
+          |       | | | |   |   |   + 23.60% b::(anonymous namespace)::ReadBlockFromFile
+          |       | | | |   |   |   | + 23.40% rocksdb::ReadBlockContents
+          |       | | | |   |   |   | | + 23.40% ReadBlock
+          |       | | | |   |   |   | |   + 22.40% rocksdb::RandomAccessFileReader::Read
+          |       | | | |   |   |   | |   | + 22.40% b::(anonymous namespace)::ReadaheadRandomAccessFile::Read
+          |       | | | |   |   |   | |   |   + 22.40% ReadIntoBuffer
+          |       | | | |   |   |   | |   |     + 22.40% BlueRocksRandomAccessFile::Read
+          |       | | | |   |   |   | |   |       + 22.40% read_random
+          |       | | | |   |   |   | |   |         + 22.40% BlueFS::_read_random
+          |       | | | |   |   |   | |   |           + 22.40% KernelDevice::read_random
+          |       | | | |   |   |   | |   |             + 22.40% pread
+          |       | | | |   |   |   | |   |               + 22.40% pread64
+          |       | | | |   |   |   | |   + 1.00% Value
+          |       | | | |   |   |   | |     + 1.00% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       | | | |   |   |   | |       + 1.00% Fast_CRC32
+          |       | | | |   |   |   | |         + 1.00% Slow_CRC32
+          |       | | | |   |   |   | + 0.20% rocksdb::Block::Block(rocksdb::BlockContents&&, unsigned long, unsigned long, rocksdb::Statistics*)
+          |       | | | |   |   |   |   + 0.20% BlockContents
+          |       | | | |   |   |   |     + 0.20% operator=
+          |       | | | |   |   |   + 0.40% rocksdb::BlockBasedTable::MaybeLoadDataBlockToCache
+          |       | | | |   |   |     + 0.40% rocksdb::BlockBasedTable::GetDataBlockFromCache
+          |       | | | |   |   |       + 0.40% b::(anonymous namespace)::GetEntryFromCache
+          |       | | | |   |   |         + 0.40% rocksdb::ShardedCache::Lookup
+          |       | | | |   |   |           + 0.20% rocksdb::LRUCache::GetShard
+          |       | | | |   |   + 0.20% b::(anonymous namespace)::TwoLevelIterator::SetSecondLevelIterator
+          |       | | | |   + 0.40% rocksdb::BlockIter::ParseNextKey
+          |       | | | |   | + 0.20% TrimAppend
+          |       | | | |   | | + 0.20% EnlargeBufferIfNeeded
+          |       | | | |   | |   + 0.20% tc_newarray
+          |       | | | |   | + 0.20% DecodeEntry
+          |       | | | |   + 0.20% b::(anonymous namespace)::TwoLevelIterator::Next
+          |       | | | |     + 0.20% Next
+          |       | | | + 17.00% b::(anonymous namespace)::TwoLevelIterator::SkipEmptyDataBlocksForward
+          |       | | |   + 17.00% b::(anonymous namespace)::TwoLevelIterator::InitDataBlock
+          |       | | |     + 17.00% rocksdb::BlockBasedTable::BlockEntryIteratorState::NewSecondaryIterator
+          |       | | |       + 17.00% rocksdb::BlockBasedTable::NewDataBlockIterator
+          |       | | |         + 16.80% b::(anonymous namespace)::ReadBlockFromFile
+          |       | | |           + 16.80% rocksdb::ReadBlockContents
+          |       | | |             + 16.80% ReadBlock
+          |       | | |               + 16.60% rocksdb::RandomAccessFileReader::Read
+          |       | | |               | + 16.60% b::(anonymous namespace)::ReadaheadRandomAccessFile::Read
+          |       | | |               |   + 16.40% ReadIntoBuffer
+          |       | | |               |   | + 16.40% BlueRocksRandomAccessFile::Read
+          |       | | |               |   |   + 16.40% read_random
+          |       | | |               |   |     + 16.40% BlueFS::_read_random
+          |       | | |               |   |       + 16.40% KernelDevice::read_random
+          |       | | |               |   |         + 16.40% pread
+          |       | | |               |   |           + 16.40% pread64
+          |       | | |               |   + 0.20% TryReadFromCache
+          |       | | |               |     + 0.20% memcpy
+          |       | | |               |       + 0.20% __memcpy_ssse3_back
+          |       | | |               + 0.20% Value
+          |       | | |                 + 0.20% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       | | |                   + 0.20% Fast_CRC32
+          |       | | |                     + 0.20% Slow_CRC32
+          |       | | + 0.20% replace_top
+          |       | |   + 0.20% downheap
+          |       | |     + 0.20% operator()
+          |       | + 14.60% rocksdb::CompactionIterator::NextFromInput
+          |       |   + 13.20% rocksdb::MergingIterator::Next
+          |       |   | + 12.80% Next
+          |       |   | | + 9.40% b::(anonymous namespace)::TwoLevelIterator::Next
+          |       |   | | | + 9.40% Next
+          |       |   | | |   + 9.20% b::(anonymous namespace)::TwoLevelIterator::SkipEmptyDataBlocksForward
+          |       |   | | |   | + 9.20% b::(anonymous namespace)::TwoLevelIterator::InitDataBlock
+          |       |   | | |   |   + 9.20% rocksdb::BlockBasedTable::BlockEntryIteratorState::NewSecondaryIterator
+          |       |   | | |   |     + 9.20% rocksdb::BlockBasedTable::NewDataBlockIterator
+          |       |   | | |   |       + 9.20% b::(anonymous namespace)::ReadBlockFromFile
+          |       |   | | |   |         + 9.20% rocksdb::ReadBlockContents
+          |       |   | | |   |           + 9.20% ReadBlock
+          |       |   | | |   |             + 8.40% rocksdb::RandomAccessFileReader::Read
+          |       |   | | |   |             | + 8.40% b::(anonymous namespace)::ReadaheadRandomAccessFile::Read
+          |       |   | | |   |             |   + 8.20% ReadIntoBuffer
+          |       |   | | |   |             |   | + 8.20% BlueRocksRandomAccessFile::Read
+          |       |   | | |   |             |   |   + 8.20% read_random
+          |       |   | | |   |             |   |     + 8.20% BlueFS::_read_random
+          |       |   | | |   |             |   |       + 8.20% KernelDevice::read_random
+          |       |   | | |   |             |   |         + 8.20% pread
+          |       |   | | |   |             |   |           + 8.20% pread64
+          |       |   | | |   |             |   + 0.20% memcpy
+          |       |   | | |   |             |     + 0.20% __memcpy_ssse3_back
+          |       |   | | |   |             + 0.80% Value
+          |       |   | | |   |               + 0.80% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       |   | | |   |                 + 0.80% Fast_CRC32
+          |       |   | | |   |                   + 0.80% Slow_CRC32
+          |       |   | | |   + 0.20% b::(anonymous namespace)::TwoLevelIterator::Next
+          |       |   | | |     + 0.20% Next
+          |       |   | | |       + 0.20% rocksdb::BlockIter::ParseNextKey
+          |       |   | | |         + 0.20% TrimAppend
+          |       |   | | |           + 0.20% memcpy
+          |       |   | | |             + 0.20% __memcpy_ssse3_back
+          |       |   | | + 3.40% b::(anonymous namespace)::TwoLevelIterator::SkipEmptyDataBlocksForward
+          |       |   | |   + 3.40% b::(anonymous namespace)::TwoLevelIterator::InitDataBlock
+          |       |   | |     + 3.40% rocksdb::BlockBasedTable::BlockEntryIteratorState::NewSecondaryIterator
+          |       |   | |       + 3.40% rocksdb::BlockBasedTable::NewDataBlockIterator
+          |       |   | |         + 3.40% b::(anonymous namespace)::ReadBlockFromFile
+          |       |   | |           + 3.40% rocksdb::ReadBlockContents
+          |       |   | |             + 3.40% ReadBlock
+          |       |   | |               + 3.20% rocksdb::RandomAccessFileReader::Read
+          |       |   | |               | + 3.20% b::(anonymous namespace)::ReadaheadRandomAccessFile::Read
+          |       |   | |               |   + 3.20% ReadIntoBuffer
+          |       |   | |               |     + 3.20% BlueRocksRandomAccessFile::Read
+          |       |   | |               |       + 3.20% read_random
+          |       |   | |               |         + 3.20% BlueFS::_read_random
+          |       |   | |               |           + 3.20% KernelDevice::read_random
+          |       |   | |               |             + 3.20% pread
+          |       |   | |               |               + 3.20% pread64
+          |       |   | |               + 0.20% Value
+          |       |   | |                 + 0.20% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       |   | |                   + 0.20% Fast_CRC32
+          |       |   | |                     + 0.20% Slow_CRC32
+          |       |   | + 0.40% replace_top
+          |       |   |   + 0.40% downheap
+          |       |   |     + 0.40% operator()
+          |       |   |       + 0.40% rocksdb::InternalKeyComparator::Compare
+          |       |   |         + 0.20% b::(anonymous namespace)::BytewiseComparatorImpl::Compare
+          |       |   |           + 0.20% compare
+          |       |   + 0.40% SetInternalKey
+          |       |   | + 0.40% SetInternalKey
+          |       |   |   + 0.40% SetKeyImpl
+          |       |   |     + 0.40% memcpy
+          |       |   |       + 0.40% __memcpy_ssse3_back
+          |       |   + 0.20% rocksdb::RangeDelAggregator::ShouldDelete
+          |       |   | + 0.20% ParseInternalKey
+          |       |   + 0.20% rocksdb::MergingIterator::value
+          |       |   | + 0.20% value
+          |       |   |   + 0.20% b::(anonymous namespace)::TwoLevelIterator::value
+          |       |   + 0.20% rocksdb::MergingIterator::key
+          |       |   + 0.20% b::(anonymous namespace)::BytewiseComparatorImpl::Equal
+          |       + 9.80% rocksdb::BlockBasedTableBuilder::Add
+          |       | + 6.60% rocksdb::BlockBasedTableBuilder::Flush
+          |       | | + 4.20% rocksdb::BlockBasedTableBuilder::WriteBlock
+          |       | | | + 4.00% rocksdb::BlockBasedTableBuilder::WriteBlock
+          |       | | | | + 4.00% rocksdb::BlockBasedTableBuilder::WriteRawBlock
+          |       | | | |   + 2.40% Value
+          |       | | | |   | + 2.40% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       | | | |   |   + 2.20% Fast_CRC32
+          |       | | | |   |     + 2.20% Slow_CRC32
+          |       | | | |   + 1.60% rocksdb::WritableFileWriter::Append
+          |       | | | |     + 1.60% rocksdb::WritableFileWriter::Flush
+          |       | | | |       + 1.00% rocksdb::WritableFileWriter::WriteBuffered
+          |       | | | |       | + 1.00% BlueRocksWritableFile::Append
+          |       | | | |       |   + 1.00% append
+          |       | | | |       |     + 1.00% append
+          |       | | | |       |       + 1.00% memcpy
+          |       | | | |       |         + 1.00% __memcpy_ssse3_back
+          |       | | | |       + 0.60% BlueRocksWritableFile::Flush
+          |       | | | |         + 0.60% flush
+          |       | | | |           + 0.60% lock_guard
+          |       | | | |             + 0.60% lock
+          |       | | | |               + 0.60% __gthread_mutex_lock
+          |       | | | |                 + 0.60% pthread_mutex_lock
+          |       | | | |                   + 0.60% _L_lock_812
+          |       | | | |                     + 0.60% __lll_lock_wait
+          |       | | | + 0.20% rocksdb::BlockBuilder::Finish
+          |       | | |   + 0.20% PutFixed32
+          |       | | + 2.40% rocksdb::BlockBasedFilterBlockBuilder::StartBlock
+          |       | |   + 2.40% rocksdb::BlockBasedFilterBlockBuilder::GenerateFilter
+          |       | |     + 2.20% b::(anonymous namespace)::BloomFilterPolicy::CreateFilter
+          |       | |     | + 0.80% rocksdb::Hash
+          |       | |     + 0.20% push_back
+          |       | |       + 0.20% std::vector<unsigned int, std::allocator<unsigned int> >::emplace_back<unsigned int>(unsigned int&&)
+          |       | |         + 0.20% construct<unsigned int, unsigned int>
+          |       | |           + 0.20% _S_construct<unsigned int, unsigned int>
+          |       | |             + 0.20% construct<unsigned int, unsigned int>
+          |       | + 1.20% rocksdb::BlockBuilder::Add
+          |       | | + 0.80% std::string::append(char const*, unsigned long)
+          |       | | | + 0.80% __memcpy_ssse3_back
+          |       | | + 0.20% std::string::_M_replace_safe(unsigned long, unsigned long, char const*, unsigned long)
+          |       | | | + 0.20% std::string::_M_mutate(unsigned long, unsigned long, unsigned long)
+          |       | | + 0.20% difference_offset
+          |       | + 1.00% rocksdb::NotifyCollectTableCollectorsOnAdd
+          |       | | + 0.40% rocksdb::InternalKeyPropertiesCollector::InternalAdd
+          |       | | | + 0.20% ParseInternalKey
+          |       | | |   + 0.20% IsExtendedValueType
+          |       | | |     + 0.20% IsValueType
+          |       | | + 0.20% ~Status
+          |       | + 0.80% rocksdb::ShortenedIndexBuilder::AddIndexEntry
+          |       | | + 0.40% rocksdb::InternalKeyComparator::FindShortestSeparator
+          |       | | | + 0.20% std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, unsigned long, std::allocator<char> const&)
+          |       | | | | + 0.20% char* std::string::_S_construct<char const*>(char const*, char const*, std::allocator<char> const&, std::forward_iterator_tag)
+          |       | | | + 0.20% PutFixed64
+          |       | | |   + 0.20% std::string::append(char const*, unsigned long)
+          |       | | |     + 0.20% std::string::reserve(unsigned long)
+          |       | | |       + 0.20% std::string::_Rep::_M_clone(std::allocator<char> const&, unsigned long)
+          |       | | |         + 0.20% std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&)
+          |       | | |           + 0.20% tc_new
+          |       | | + 0.20% ~basic_string
+          |       | | | + 0.20% _M_dispose
+          |       | | |   + 0.20% tc_delete
+          |       | | + 0.20% rocksdb::BlockBuilder::Add
+          |       | |   + 0.20% std::string::append(char const*, unsigned long)
+          |       | |     + 0.20% __memcpy_ssse3_back
+          |       | + 0.20% ok
+          |       |   + 0.20% rocksdb::BlockBasedTableBuilder::status
+          |       + 0.60% rocksdb::CompactionJob::FinishCompactionOutputFile
+          |       | + 0.60% rocksdb::WritableFileWriter::Sync
+          |       |   + 0.40% rocksdb::WritableFileWriter::SyncInternal
+          |       |   | + 0.40% BlueRocksWritableFile::Sync
+          |       |   |   + 0.40% fsync
+          |       |   |     + 0.40% BlueFS::_fsync
+          |       |   |       + 0.40% BlueFS::_flush_bdev_safely
+          |       |   |         + 0.20% clear
+          |       |   |         | + 0.20% std::_List_base<aio_t, std::allocator<aio_t> >::_M_clear
+          |       |   |         |   + 0.20% destroy<std::_List_node<aio_t> >
+          |       |   |         |     + 0.20% ~_List_node
+          |       |   |         |       + 0.20% ~aio_t
+          |       |   |         |         + 0.20% ~list
+          |       |   |         |           + 0.20% ~list
+          |       |   |         |             + 0.20% ~_List_base
+          |       |   |         |               + 0.20% std::_List_base<ceph::buffer::ptr, std::allocator<ceph::buffer::ptr> >::_M_clear
+          |       |   |         |                 + 0.20% destroy<std::_List_node<ceph::buffer::ptr> >
+          |       |   |         |                   + 0.20% ~_List_node
+          |       |   |         |                     + 0.20% ~ptr
+          |       |   |         |                       + 0.20% ceph::buffer::ptr::release
+          |       |   |         |                         + 0.20% ceph::buffer::raw_posix_aligned::~raw_posix_aligned
+          |       |   |         |                           + 0.20% ~raw_posix_aligned
+          |       |   |         |                             + 0.20% tc_free
+          |       |   |         |                               + 0.20% tcmalloc::PageHeap::Delete(tcmalloc::Span*)
+          |       |   |         |                                 + 0.20% tcmalloc::PageHeap::MergeIntoFreeList(tcmalloc::Span*)
+          |       |   |         |                                   + 0.20% tcmalloc::PageHeap::DecommitSpan(tcmalloc::Span*)
+          |       |   |         |                                     + 0.20% TCMalloc_SystemRelease(void*, unsigned long)
+          |       |   |         |                                       + 0.20% madvise
+          |       |   |         + 0.20% BlueFS::wait_for_aio
+          |       |   |           + 0.20% IOContext::aio_wait
+          |       |   |             + 0.20% std::condition_variable::wait(std::unique_lock<std::mutex>&)
+          |       |   |               + 0.20% pthread_cond_wait@@GLIBC_2.3.2
+          |       |   + 0.20% rocksdb::WritableFileWriter::Flush
+          |       |     + 0.20% BlueRocksWritableFile::Flush
+          |       |       + 0.20% flush
+          |       |         + 0.20% BlueFS::_flush
+          |       |           + 0.20% BlueFS::_flush_range
+          |       |             + 0.20% IOContext::aio_wait
+          |       |               + 0.20% std::condition_variable::wait(std::unique_lock<std::mutex>&)
+          |       |                 + 0.20% pthread_cond_wait@@GLIBC_2.3.2
+          |       + 0.40% rocksdb::MergingIterator::SeekToFirst
+          |       | + 0.40% SeekToFirst
+          |       |   + 0.40% b::(anonymous namespace)::TwoLevelIterator::SeekToFirst
+          |       |     + 0.40% b::(anonymous namespace)::TwoLevelIterator::InitDataBlock
+          |       |       + 0.40% b::(anonymous namespace)::LevelFileIteratorState::NewSecondaryIterator
+          |       |         + 0.40% rocksdb::TableCache::NewIterator
+          |       |           + 0.40% rocksdb::TableCache::GetTableReader
+          |       |             + 0.40% rocksdb::BlockBasedTableFactory::NewTableReader(rocksdb::TableReaderOptions const&, std::unique_ptr<rocksdb::RandomAccessFileReader, std::default_delete<rocksdb::RandomAccessFileReader> >&&, unsigned long, std::unique_ptr<rocksdb::TableReader, std::default_delete<rocksdb::TableReader> >*, bool) const
+          |       |               + 0.40% rocksdb::BlockBasedTable::Open(rocksdb::ImmutableCFOptions const&, rocksdb::EnvOptions const&, rocksdb::BlockBasedTableOptions const&, rocksdb::InternalKeyComparator const&, std::unique_ptr<rocksdb::RandomAccessFileReader, std::default_delete<rocksdb::RandomAccessFileReader> >&&, unsigned long, std::unique_ptr<rocksdb::TableReader, std::default_delete<rocksdb::TableReader> >*, bool, bool, int)
+          |       |                 + 0.20% rocksdb::BlockBasedTable::NewIndexIterator
+          |       |                 | + 0.20% rocksdb::BlockBasedTable::CreateIndexReader
+          |       |                 |   + 0.20% Create
+          |       |                 |     + 0.20% b::(anonymous namespace)::ReadBlockFromFile
+          |       |                 |       + 0.20% rocksdb::ReadBlockContents
+          |       |                 |         + 0.20% ReadBlock
+          |       |                 |           + 0.20% Value
+          |       |                 |             + 0.20% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       |                 |               + 0.20% Fast_CRC32
+          |       |                 |                 + 0.20% Slow_CRC32
+          |       |                 + 0.20% Prefetch
+          |       |                   + 0.20% b::(anonymous namespace)::ReadaheadRandomAccessFile::Prefetch
+          |       |                     + 0.20% ReadIntoBuffer
+          |       |                       + 0.20% BlueRocksRandomAccessFile::Read
+          |       |                         + 0.20% read_random
+          |       |                           + 0.20% BlueFS::_read_random
+          |       |                             + 0.20% KernelDevice::read_random
+          |       |                               + 0.20% pread
+          |       |                                 + 0.20% pread64
+          |       + 0.40% rocksdb::CompactionJob::SubcompactionState::ShouldStopBefore
+          |       + 0.40% UpdateBoundaries
+          |       | + 0.40% DecodeFrom
+          |       |   + 0.40% std::string::_M_replace_safe(unsigned long, unsigned long, char const*, unsigned long)
+          |       |     + 0.20% std::string::_M_mutate(unsigned long, unsigned long, unsigned long)
+          |       |     + 0.20% __memcpy_ssse3_back
+          |       + 0.20% rocksdb::VersionSet::MakeInputIterator
+          |       | + 0.20% rocksdb::TableCache::NewIterator
+          |       |   + 0.20% rocksdb::TableCache::GetTableReader
+          |       |     + 0.20% rocksdb::BlockBasedTableFactory::NewTableReader(rocksdb::TableReaderOptions const&, std::unique_ptr<rocksdb::RandomAccessFileReader, std::default_delete<rocksdb::RandomAccessFileReader> >&&, unsigned long, std::unique_ptr<rocksdb::TableReader, std::default_delete<rocksdb::TableReader> >*, bool) const
+          |       |       + 0.20% rocksdb::BlockBasedTable::Open(rocksdb::ImmutableCFOptions const&, rocksdb::EnvOptions const&, rocksdb::BlockBasedTableOptions const&, rocksdb::InternalKeyComparator const&, std::unique_ptr<rocksdb::RandomAccessFileReader, std::default_delete<rocksdb::RandomAccessFileReader> >&&, unsigned long, std::unique_ptr<rocksdb::TableReader, std::default_delete<rocksdb::TableReader> >*, bool, bool, int)
+          |       |         + 0.20% rocksdb::BlockBasedTable::NewIndexIterator
+          |       |           + 0.20% rocksdb::BlockBasedTable::CreateIndexReader
+          |       |             + 0.20% Create
+          |       |               + 0.20% b::(anonymous namespace)::ReadBlockFromFile
+          |       |                 + 0.20% rocksdb::ReadBlockContents
+          |       |                   + 0.20% ReadBlock
+          |       |                     + 0.20% Value
+          |       |                       + 0.20% b::crc32c::ExtendImpl<rocksdb::crc32c::Fast_CRC32>
+          |       |                         + 0.20% Fast_CRC32
+          |       |                           + 0.20% Slow_CRC32
+          |       + 0.20% rocksdb::BlockBasedTableBuilder::FileSize
+          |       + 0.20% reset
+          |         + 0.20% operator()
+          |           + 0.20% rocksdb::MergingIterator::~MergingIterator
+          |             + 0.20% ~MergingIterator
+          |               + 0.20% DeleteIter
+          |                 + 0.20% b::(anonymous namespace)::TwoLevelIterator::~TwoLevelIterator
+          |                   + 0.20% ~TwoLevelIterator
+          |                     + 0.20% ~InternalIterator
+          |                       + 0.20% rocksdb::Cleanable::~Cleanable
+          |                         + 0.20% DoCleanup
+          |                           + 0.20% rocksdb::BlockBasedTable::~BlockBasedTable
+          |                             + 0.20% rocksdb::BlockBasedTable::~BlockBasedTable
+          |                               + 0.20% rocksdb::BlockBasedTable::Close
+          |                                 + 0.20% rocksdb::LRUCacheShard::Erase
+          |                                   + 0.20% Free
+          |                                     + 0.20% rocksdb::BinarySearchIndexReader::~BinarySearchIndexReader
+          |                                       + 0.20% ~BinarySearchIndexReader
+          |                                         + 0.20% ~unique_ptr
+          |                                           + 0.20% operator()
+          |                                             + 0.20% ~Block
+          |                                               + 0.20% ~BlockContents
+          |                                                 + 0.20% ~unique_ptr
+          |                                                   + 0.20% operator()
+          |                                                     + 0.20% tc_deletearray
+          |                                                       + 0.20% tcmalloc::PageHeap::Delete(tcmalloc::Span*)
+          |                                                         + 0.20% tcmalloc::PageHeap::MergeIntoFreeList(tcmalloc::Span*)
+          |                                                           + 0.20% tcmalloc::PageHeap::DecommitSpan(tcmalloc::Span*)
+          |                                                             + 0.20% TCMalloc_SystemRelease(void*, unsigned long)
+          |                                                               + 0.20% madvise
+          + 31.00% std::condition_variable::wait(std::unique_lock<std::mutex>&)
+            + 31.00% pthread_cond_wait@@GLIBC_2.3.2
+
+
+Thread: 28===8109===tp_osd_tp
+......
+......
+......
+}
+```
+具体文件可[下载](https://github.com/yinminggang/1-image-important-threads.txt)
 
 由上面结果可以知道6个线程中哪些函数较为消耗资源，如下所示：
 `（1）Thread: 2===21792===rokcsdb::bg0：`
@@ -156,6 +501,6 @@ line140，调节采样运行时间（无需太短或长），据说单位为秒�
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-3.png)
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-4.png)
 
-**想得到所有69个线程的函数堆栈情况，可见附件中文件 1-image-all-threads.txt**
+**想得到所有69个线程的函数堆栈情况，可去[下载](https://github.com/yinminggang/1-image-all-threads.txt)**
 
 
