@@ -1,65 +1,97 @@
 ---
 layout:     post
-title:      "下一代 Web 应用模型 —— Progressive Web App"
-subtitle:   "The Next Generation Application Model For The Web - Progressive Web App"
-date:       2017-02-09 12:00:00
-author:     "Hux"
+title:      "gdbprof分析ceph的4K-randwrite性能"
+subtitle:   "分析ceph进行4k随机写时哪些线程及其函数较为耗资源"
+date:       2018-03-17 10:00:00
+author:     "YMG"
 header-img: "img/post-bg-nextgen-web-pwa.jpg"
 header-mask: 0.3
 catalog:    true
 tags:
-    - 前端开发
-    - JavaScript
-    - PWA
+    - 云存储
+    - ceph
+    - gdbprof
 ---
 
-
-> 今年 9 月份的时候，《程序员》杂志社就邀请我写一篇关于 PWA 的文章。后来花式拖稿，拖过了 10 月的 QCon，11 月的 GDG DevFest，终于在 12 月把这篇长文熬了出来。几次分享的不成熟，这次的结构算是比较满意了。「 可能是目前中文世界里对 PWA 最全面详细的长文了」，希望你能喜欢。<br><br>
-> 本文首发于 [CSDN](http://geek.csdn.net/news/detail/135595) 与《程序员》2017 年 2 月刊，同步发布于 [Hux Blog](https://huangxuan.me)、[前端外刊评论 - 知乎专栏](https://zhuanlan.zhihu.com/FrontendMagazine)，转载请保留链接 ;)
-
-
-## 下一代 Web 应用？
-
-近年来，Web 应用在整个软件与互联网行业承载的责任越来越重，软件复杂度和维护成本越来越高，Web 技术，尤其是 Web 客户端技术，迎来了爆发式的发展。
-
-包括但不限于基于 Node.js 的前端工程化方案；诸如 Webpack、Rollup 这样的打包工具；Babel、PostCSS 这样的转译工具；TypeScript、Elm 这样转译至 JavaScript 的编程语言；React、Angular、Vue 这样面向现代 web 应用需求的前端框架及其生态，也涌现出了像[同构 JavaScript][1]与[通用 JavaScript 应用][2]这样将服务器端渲染（Server-side Rendering）与单页面应用模型（Single-page App）结合的 web 应用架构方式，可以说是百花齐放。
-
-但是，Web 应用在移动时代并没有达到其在桌面设备上流行的程度。究其原因，尽管上述的各种方案已经充分利用了现有的 JavaScript 计算能力、CSS 布局能力、HTTP 缓存与浏览器 API 对当代基于 [Ajax][3] 与[响应式设计][4]的 web 应用模型的性能与体验带来了工程角度的巨大突破，我们仍然无法在不借助原生程序辅助浏览器的前提下突破 web 平台本身对 web 应用固有的桎梏：**客户端软件（即网页）需要下载所带来的网络延迟；与 Web 应用依赖浏览器作为入口所带来的体验问题。**
-
-![](/img/in-post/post-nextgen-web-pwa/PWAR-007.jpeg)
-*Web 与原生应用在移动平台上的使用时长对比 [图片来源: Google][i2]*
-
-在桌面设备上，由于网络条件稳定，屏幕尺寸充分，交互方式趋向于多任务，这两点造成的负面影响对比 web 应用免于安装、随叫随到、无需更新等优点，瑕不掩瑜。但是在移动时代，脆弱的网络连接与全新的人机交互方式使得这两个问题被无限放大，严重制约了 web 应用在移动平台的发展。在用户眼里，原生应用不会出现「白屏」，清一色都摆在主屏幕上；而 web 应用则是浏览器这个应用中的应用，使用起来并不方便，而且加载也比原生应用要慢。
-
-Progressive Web Apps（以下简称 PWA）以及构成 PWA 的一系列关键技术的出现，终于让我们看到了彻底解决这两个平台级别问题的曙光：能够显著提高应用加载速度、甚至让 web 应用可以在离线环境使用的 Service Worker 与 Cache Storage；用于描述 web 应用元数据（metadata）、让 web 应用能够像原生应用一样被添加到主屏、全屏执行的 Web App Manifest；以及进一步提高 web 应用与操作系统集成能力，让 web 应用能在未被激活时发起推送通知的 Push API 与 Notification API 等等。
-
-将这些技术组合在一起会是怎样的效果呢？「印度阿里巴巴」 —— [Flipkart][17] 在 2015 年一度关闭了自己的移动端网站，却在年底发布了现在最为人津津乐道的 PWA 案例 *FlipKart Lite*，成为世界上第一个支撑大规模业务的 PWA。发布的一周后它就亮相于 [Chrome Dev Summit 2015][15] 上，笔者当时就被惊艳到了。为了方便各媒介上的读者观看，笔者做了几幅图方便给大家介绍：
-
-![](/img/in-post/post-nextgen-web-pwa/flipkart-1.jpeg)
-*图片来源: Hux & [Medium.com][i3]*
-
-当浏览器发现用户[需要][16] Flipkart Lite 时，它就会提示用户「嘿，你可以把它添加至主屏哦」（用户也可以手动添加）。这样，Flipkart Lite 就会像原生应用一样在主屏上留下一个自定义的 icon 作为入口；与一般的书签不同，当用户点击 icon 时，Flipkat Lite 将直接全屏打开，不再受困于浏览器的 UI 中，而且有自己的启动屏效果。
+> gdbprof，是一款基于系统时间（而非cpu事件）的性能分析工具，它通过sampling的方式进行性能统计的。每隔period（默认为0.1秒），给gdb发送sigint信号，然后循环每个thread，根据该thread的call trace，统计函数的调用情况。
+它是基于python实现的，中间用到了gdb的python api。<br>
+>[gdbprof源码](https://github.com/markhpc/gdbprof)
+>本文采用的[gdbprof优化版本](https://github.com/liupan1111/gdbprof)<br>
+>[本人forked版本](https://github.com/yinminggang/gdbprof),随时欢迎
 
 
-![](/img/in-post/post-nextgen-web-pwa/flipkart-2.jpeg)
-*图片来源: Hux & [Medium.com][i3]*
+## 实验环境
 
-更强大的是，在无法访问网络时，Flipkart Lite 可以像原生应用一样照常执行，还会很骚气的变成黑白色；不但如此，曾经访问过的商品都会被缓存下来得以在离线时继续访问。在商品降价、促销等时刻，Flipkart Lite 会像原生应用一样发起推送通知，吸引用户回到应用。
+搭建ceph-osd集群（本文用了3个osd.0、osd.1、osd.2）
 
-**无需担心网络延迟；有着独立入口与独立的保活机制。**之前两个问题的一并解决，宣告着 web 应用在移动设备上的浴火重生：满足 PWA 模型的 web 应用，将逐渐成为移动操作系统的一等公民，并将向原生应用发起挑战与「复仇」。
+服务端：server_host（osd）
 
-更令笔者兴奋的是，就在今年 11 月的 [Chrome Dev Summit 2016][18] 上，Chrome 的工程 VP Darin Fisher 介绍了 Chrome 团队正在做的一些实验：把「添加至主屏」重命名为「安装」，被安装的 PWA 不再仅以 widget 的形式显示在桌面上，而是真正做到与所有原生应用平级，一样被收纳进应用抽屉（App Drawer）里，一样出现在系统设置中 🎉🎉🎉。
+客户端：client_host（mons、mgrs）
 
-![](/img/in-post/post-nextgen-web-pwa/flipkart-3.jpeg)
-*图片来源: Hux & [@adityapunjani][i4]*
+服务端需安装gdb，客户端需安装fio（都自行解决），下载[gdbprof](https://github.com/liupan1111/gdbprof)
 
-图中从左到右分别为：类似原生应用的安装界面；被收纳在应用抽屉里的 Flipkart Lite 与 Hux Blog；设置界面中并列出现的 Flipkart 原生应用与 Flipkart Lite PWA （可以看到 PWA 巨大的体积优势）
+## 实验过程
 
-**笔者相信，PWA 模型将继约 20 年前横空出世的 Ajax 与约 10 年前风靡移动互联网的响应式设计之后，掀起 web 应用模型的第三次根本性革命，将 web 应用带进一个全新的时代。**
+###（1）简单查看下集群是否正常：
+**$ceph osd tree**
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_health1.png)
 
-## PWA 关键技术的前世今生
+**$ceph -s**
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_heath2.png)
 
-### [Web App Manifest][spec1]
+###（2）查看所有osd对应进程及进程号
+**$ps aux|grep ceph-osd**
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_process.png)
+
+
+##实验一 求解耗系统资源的线程（单image和10-images）
+
+客户端（server_host）操作：
+
+fio 创建pool（或默认rbd）和image，并进行后续操作
+
+**$ rbd create --pool ymg --image img01 --size 40G**
+
+先进行填充实验
+
+**$fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=write -bs=1M -size=40G -ramp_time=5 -group_reporting -name=full-fill**
+
+再进行4k-randWrite的单image操作
+
+**$ fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=one_gdbprof**
+
+与此同时，服务端机器(client_host)需要并行执行top命令
+
+**$top -p 7922 -H**
+
+也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/1_image_sys_load.png)
+
+
+`对比实验`：10个images的4k-randWrite的实验操作：
+
+**$ BS=4k RW=randwrite fio images.fio**
+
+得先创建10个images
+
+**$rbd create ymg/img00 -s 40G**
+
+images.fio内容如下所示：
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/10_images_fio.png)
+
+服务端执行 **$top -p 7922 -H**
+
+结果如下所示
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/10_images_sys_load.png)
+
+`总结`
+
+由上面的一对儿实验可知：4k-randwrite过程中，比较消耗资源的线程有：`msgr-worker-0(7926)/msgr-worker-1(7927)、bstore_kv_sync(7972)、rocksdb::bg0(21792)、finisher(7971)、bstore_kv_final(7973)、log(7924)、tp_osd_tp(8109)`
+
+`接下来，我们需要具体看这些线程中具体哪些函数最消耗时间。这就是gdbprof的亮相了。`
+
+
+##实验二 求解耗系统资源的具体函数（单image）
 
 Web App Manifest，即通过一个清单文件向浏览器暴露 web 应用的元数据，包括名字、icon 的 URL 等，以备浏览器使用，比如在添加至主屏或推送通知时暴露给操作系统，从而增强 web 应用与操作系统的集成能力。
 

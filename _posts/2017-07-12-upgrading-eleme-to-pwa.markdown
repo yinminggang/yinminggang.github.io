@@ -1,17 +1,16 @@
 ---
 layout:       post
-title:        "饿了么的 PWA 升级实践"
-subtitle:     "Upgrading Ele.me to Progressive Web App"
-date:         2017-07-12 12:00:00
-author:       "Hux"
+title:        "gdbprof分析ceph的4K-randwrite性能"
+subtitle:     "分析ceph进行4k随机写时哪些线程及其函数较为耗资源"
+date:         2018-03-17 10:20:00
+author:       "YMG"
 header-img:   "img/in-post/post-eleme-pwa/eleme-at-io.jpg"
 header-mask:  0.3
 catalog:      true
 multilingual: true
 tags:
-    - 前端开发
-    - JavaScript
-    - PWA
+    - 云存储
+    - ceph
 ---
 
 <!-- Chinese Version -->
