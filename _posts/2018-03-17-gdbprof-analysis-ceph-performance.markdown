@@ -93,9 +93,18 @@ images.fio内容如下所示：
 
 ##实验二 求解耗系统资源的具体函数（单image）
 
-Web App Manifest，即通过一个清单文件向浏览器暴露 web 应用的元数据，包括名字、icon 的 URL 等，以备浏览器使用，比如在添加至主屏或推送通知时暴露给操作系统，从而增强 web 应用与操作系统的集成能力。
+在客户端进行4k-randWrite操作同时（fio命令），服务端要跑gdbprof工具（可下面参考原文中的.docx文件），切换到gdbprof目录，有gdbprof.py，
 
-让 web 应用在移动设备上的体验更接近原生应用的尝试其实早在 2008 年的 [iOS 1.1.3 与 iOS 2.1.0 ][q37]时就开始了，它们分别为 web 应用增加了对自定义 icon 和全屏打开的支持。
+**$vim gdbprof.py**
+
+line140，调节采样运行时间（无需太短或长），据说单位为秒，但感觉是采样次数，也就是样本个数，本人设过500，1000，2000，5000(等待时间太长)，如下所示：
+![](/img/2018-03-17-gdbprof-analysis-ceph-performance/gdbprof_config.png)
+
+**$sudo gdb -ex 'set pagination off' -ex 'attach 7922' -ex 'source gdbprof.py' -ex 'profile begin' -ex 'quit'**
+
+注：在运行过程中，可能会出现一些下面的debuginfo信息
+
+**$yum install ceph-debuginfo.x86_64 --enablerepo didi_deph**
 
 ![](/img/in-post/post-nextgen-web-pwa/ios2-a2hs.gif)
 *图片来源: [appleinsider.com][i1]*
