@@ -246,7 +246,8 @@ compaction_readahead_size=32768
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_cpu_radio.png)
 
 
-
-
-
+##总结
+根据上面的10组实验结果，我们实验的参数调节是参照一些文章，[如](https://www.jianshu.com/p/a2892a161a7b)我们进行了总结，发现机器的写速度约为40MB/s，让我们以parameter10实验为例，假如我们write_buffer_size=536870912(2^29),也即是64MB，也即是每1.6s产生一个新的memtable；min_write_buffer_number_to_merge=2，也就是每产生2个memtable，就进行合并操作，即每3.2s；根据max_write_buffer_number=256意思，我们应该尽量设置大一些；而参数writable_file_max_buffer_size和compaction_readahead_size应该设置差不多大小。其实parameter9和parameter10是个对比。[参考](https://www.jianshu.com/p/8e0018b6a8b6)
+我们将结果进行了统计，[详见xlsx文件](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/Ceph-osd-4kRandWrite测试结果统计.xlsx)
+`由结果可以知道，我们的调参是有效的，其中第10组实验结果表现较好，当然，优化还是要持续不断。`
 
