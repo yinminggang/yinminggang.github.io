@@ -1,11 +1,11 @@
 ---
 layout:     keynote
-title:      "Service Worker 101「GDG DevFest 2016 北京」"
-subtitle:   "Slides: Service Worker 101, Working Offline and Instant Loading (GDG DevFest 2016 Beijing)"
+title:      "在更复杂环境下测试bluestore_rocksdb调参性能"
+subtitle:   "多osd，多images环境下，测试对ceph导出的rocksdb参数调优结果"
 iframe:     "//huangxuan.me/sw-101-gdgdf/"
 navcolor:   "invert"
-date:       2016-11-20
-author:     "Hux"
+date:       2018-03-19 10:30
+author:     "YMG"
 tags:
     - 前端开发
     - JavaScript
