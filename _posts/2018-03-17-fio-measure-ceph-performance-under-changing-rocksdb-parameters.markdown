@@ -9,14 +9,14 @@ header-img: ""
 
 > 在[上一篇文章](https://)中测试了在ceph环境下，通过gdbprof分析4k-randwrite的性能，可以看出rocksdb线程耗用资源较多，因为ceph的底层就是基于rocksdb进行存储的，因此尝试着去调节ceph中导出的rocksdb参数，来达到一个调优效果。
 
-##简单查看下集群是否正常：
+## 简单查看下集群是否正常：
 **$ceph osd tree**
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/ceph_cluster_health1.png)
 
 **$ceph -s**
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/ceph_cluster_heath2.png)
 
-##rocksdb导出参数
+## rocksdb导出参数
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/init_rocksdb_parameters.png)
 接下来对参数进行说明：
 "bluestore_rocksdb_options": "compression=kNoCompression,max_write_buffer_number=4,min_write_buffer_number_to_merge=1,recycle_log_file_num=4,write_buffer_size=268435456,writable_file_max_buffer_size=0,compaction_readahead_size=2097152"
@@ -27,7 +27,7 @@ header-img: ""
 `compaction_readahead_size=2097152(2^21)`：预读大小，在进行compression时，执行更大的数据读取，
 `writable_file_max_buffer_size=0`：可写文件的最大写缓存
 
-##修改rocksdb参数
+## 修改rocksdb参数
 首先分为服务端机器server_host和客户端机器client_host
 修改server_host的/etc/ceph/ceph.conf中bluestore rocksdb项
 **$vim /etc/ceph/ceph.conf**
@@ -41,18 +41,18 @@ bluestore rocksdb options = compression=kNoCompression,max_write_buffer_number=8
 [osd.2]
 ```
 **wq**保存退出
-##重启osd集群
+## 重启osd集群
 **systemctl restart ceph-osd@0.service**
 **systemctl restart ceph-osd@1.service**
 **systemctl restart ceph-osd@2.service**
 `注`：osd一个一个的重启，不要快速重启三个，等一个osd重启并运行正常后（可用**$ceph osd tree查看**），再重启第二个，不然集群容易挂掉
 
-##查看rocksdb参数是否有变化
+## 查看rocksdb参数是否有变化
 **ceph daemon osd.0 config show | grep bluestore_rocksdb**
 **ceph daemon osd.1 config show | grep bluestore_rocksdb**
 **ceph daemon osd.2 config show | grep bluestore_rocksdb**
 
-##FIO测试性能
+## FIO测试性能
 （1）先创建image再进行4k-randwrite操作
 	**$rbd create --pool ymg --image img01 --size 40G**
 （2）填充image
@@ -60,7 +60,7 @@ bluestore rocksdb options = compression=kNoCompression,max_write_buffer_number=8
 （3）randwrite命令
 	**$fio -direct=1 -iodepth=256 -ioengine=rbd -pool=ymg -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=parameter1**
 
-##对比实验及结果
+## 对比实验及结果
 ####【Parameter0实验-原始参数】
 compression=kNoCompression
 max_write_buffer_number=4
@@ -231,7 +231,7 @@ compaction_readahead_size=32768
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_writeIOPS.png)
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_cpu_radio.png)
 
-##总结
+## 总结
 根据上面的10组实验结果，我们实验的参数调节是参照一些文章，[如](https://www.jianshu.com/p/a2892a161a7b)我们进行了总结，发现机器的写速度约为40MB/s，让我们以parameter10实验为例，假如我们write_buffer_size=536870912(2^29),也即是64MB，也即是每1.6s产生一个新的memtable；min_write_buffer_number_to_merge=2，也就是每产生2个memtable，就进行合并操作，即每3.2s；根据max_write_buffer_number=256意思，我们应该尽量设置大一些；而参数writable_file_max_buffer_size和compaction_readahead_size应该设置差不多大小。其实parameter9和parameter10是个对比。[参考](https://www.jianshu.com/p/8e0018b6a8b6)
 我们将结果进行了统计，[详见xlsx文件](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/Ceph-osd-4kRandWrite测试结果统计.xlsx)
 `由结果可以知道，我们的调参是有效的，其中第9组实验结果表现较好，当然，优化还是要持续不断。`
