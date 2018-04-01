@@ -33,7 +33,7 @@ tags:
 ###（2）查看所有osd对应进程及进程号
 **$ps aux|grep ceph-osd**
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_process.png)
-##实验一 求解耗系统资源的线程（单image和10-images）
+## 实验一 求解耗系统资源的线程（单image和10-images）
 客户端（server_host）操作：
 fio 创建pool（或默认rbd）和image，并进行后续操作
 **$ rbd create --pool ymg --image img01 --size 40G**
@@ -93,7 +93,7 @@ images.fio内容如下所示：
 由上面的一对儿实验可知：4k-randwrite过程中，比较消耗资源的线程有：`msgr-worker-0(7926)/msgr-worker-1(7927)、bstore_kv_sync(7972)、rocksdb::bg0(21792)、finisher(7971)、bstore_kv_final(7973)、log(7924)、tp_osd_tp(8109)`
 `接下来，我们需要具体看这些线程中具体哪些函数最消耗时间。这就是gdbprof的亮相了。`
 
-##实验二 求解耗系统资源的具体函数（单image）
+## 实验二 求解耗系统资源的具体函数（单image）
 在客户端进行4k-randWrite操作同时（fio命令），服务端要跑gdbprof工具（可下面参考原文中的.docx文件），切换到gdbprof目录，有gdbprof.py，
 **$vim gdbprof.py**
 line140，调节采样运行时间（无需太短或长），据说单位为秒，但感觉是采样次数，也就是样本个数，本人设过500，1000，2000，5000(等待时间太长)，如下所示：
