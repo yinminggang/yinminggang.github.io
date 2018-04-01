@@ -2,7 +2,6 @@
 layout:     keynote
 title:      "bluestore性能调优测试"
 subtitle:   "调节各类参数来测试ceph集群的4k-randwrite的性能"
-iframe:     "//yinminggang.github.io/sw-101-gdgdf/"
 navcolor:   "invert"
 date:       2018-04-01 10:59:30
 author:     "YMG"

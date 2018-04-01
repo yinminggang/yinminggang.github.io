@@ -12,16 +12,13 @@ tags:
     - ceph
     - gdbprof
 ---
-
 > gdbprof，是一款基于系统时间（而非cpu事件）的性能分析工具，它通过sampling的方式进行性能统计的。每隔period（默认为0.1秒），给gdb发送sigint信号，然后循环每个thread，根据该thread的call trace，统计函数的调用情况。
 它是基于python实现的，中间用到了gdb的python api。<br>
 >[gdbprof源码](https://github.com/markhpc/gdbprof)
 >本文采用的[gdbprof优化版本](https://github.com/liupan1111/gdbprof)<br>
 >[本人forked版本](https://github.com/yinminggang/gdbprof),随时欢迎
 
-
 ## 实验环境
-
 搭建ceph-osd集群（本文用了3个osd.0、osd.1、osd.2）
 服务端：server_host（osd）
 客户端：client_host（mons、mgrs）
