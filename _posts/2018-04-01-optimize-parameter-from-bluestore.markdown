@@ -37,7 +37,7 @@ application not enabled on 1 pool(s)
 实验2-4：2-client各自随机写45个不同image
 实验2-5：2-client各自随机写60个不同image
 ### 1.3 实验结果
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task1_1.png)
+![](/img/2018-04-01-optimize-parameter-from-bluestore/task1_1.png =500px)
 ### 1.4 结果分析及结论
 由上图可以知道，在【每核利用率】列，可以知道，此时集群没有达到CPU瓶颈，这是符合我们测试的要求；在【Fio-IOPS】列，可以看出各组实验IOPS有一定的差距，但也没有太高IOPS，也没有太低IOPS，相差最大的为20%左右（1-client）和40%左右（2-client）。但各组实验的IOPS都不高，可见osd数量是集群性能的一个重要因素。
 
@@ -50,8 +50,8 @@ application not enabled on 1 pool(s)
 实验1-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）bluestore_shard_finishers=false
 
 两个客户端fio配置文件如下：
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png)
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png)
+![](/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png =200px)
+![](/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png =300px)
 
 实验1-2：两个客户端并发4k随机写同一个image的不同位置(offset)（分区不同）bluestore_shard_finishers=false
 两个客户端fio配置文件如下(创建image 时，每个image设置的为20G)：
