@@ -10,13 +10,18 @@ tags:
     - ceph
     - gdbprof
 ---
+
 > gdbprof，是一款基于系统时间（而非cpu事件）的性能分析工具，它通过sampling的方式进行性能统计的。每隔period（默认为0.1秒），给gdb发送sigint信号，然后循环每个thread，根据该thread的call trace，统计函数的调用情况。
+
 它是基于python实现的，中间用到了gdb的python api。<br>
 >[gdbprof源码](https://github.com/markhpc/gdbprof)
->本文采用的[gdbprof优化版本](https://github.com/liupan1111/gdbprof)<br>
+
+>本文采用的[gdbprof优化版本](https://github.com/liupan1111/gdbprof)
 >[本人forked版本](https://github.com/yinminggang/gdbprof),随时欢迎
 ## 实验环境
+
 搭建ceph-osd集群（本文用了3个osd.0、osd.1、osd.2）<br>
+
 服务端：server_host（osd）<br>
 客户端：client_host（mons、mgrs）<br>
 服务端需安装gdb，客户端需安装fio（都自行解决），下载[gdbprof](https://github.com/liupan1111/gdbprof)<br>
@@ -25,10 +30,18 @@ tags:
 **$ceph osd tree**<br>
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_health1.png)
 **$ceph -s**<br>
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_heath2.png)
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_heath2.png">
+</center>
 ###（2）查看所有osd对应进程及进程号
-**$ps aux|grep ceph-osd**<br>
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_process.png)
+
+**$ps aux|grep ceph-osd**
+
+
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_process.png">
+</center>
+
 ## 实验一 求解耗系统资源的线程（单image和10-images）
 客户端（server_host）操作：<br>
 fio 创建pool（或默认rbd）和image，并进行后续操作<br>
@@ -40,8 +53,10 @@ fio 创建pool（或默认rbd）和image，并进行后续操作<br>
 与此同时，服务端机器(client_host)需要并行执行top命令<br>
 **$top -p 7922 -H**<br>
 也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：<br>
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/1_image_sys_load.png)
-`对比实验`：10个images的4k-randWrite的实验操作：
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/1_image_sys_load.png">
+</center>
+`对比实验`：10个images的4k-randWrite的实验操作：<br>
 **$ BS=4k RW=randwrite fio images.fio**<br>
 得先创建10个images<br>
 **$rbd create ymg/img00 -s 40G**<br>
@@ -81,14 +96,14 @@ images.fio内容如下所示：
   [09]
   rbdname=img09
 ```
-
-服务端执行 **$top -p 7922 -H**
-结果如下所示
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/10_images_sys_load.png)
-`总结`
-由上面的一对儿实验可知：4k-randwrite过程中，比较消耗资源的线程有：`msgr-worker-0(7926)/msgr-worker-1(7927)、bstore_kv_sync(7972)、rocksdb::bg0(21792)、finisher(7971)、bstore_kv_final(7973)、log(7924)、tp_osd_tp(8109)`
+服务端执行 **$top -p 7922 -H**<br>
+结果如下所示<br>
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/10_images_sys_load.png">
+</center>
+`总结`<br>
+由上面的一对儿实验可知：4k-randwrite过程中，比较消耗资源的线程有：`msgr-worker-0(7926)/msgr-worker-1(7927)、bstore_kv_sync(7972)、rocksdb::bg0(21792)、finisher(7971)、bstore_kv_final(7973)、log(7924)、tp_osd_tp(8109)`<br>
 `接下来，我们需要具体看这些线程中具体哪些函数最消耗时间。这就是gdbprof的亮相了。`
-
 ## 实验二 求解耗系统资源的具体函数（单image）
 在客户端进行4k-randWrite操作同时（fio命令），服务端要跑gdbprof工具（可下面参考原文中的.docx文件），切换到gdbprof目录，有gdbprof.py，
 **$vim gdbprof.py**
