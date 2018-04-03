@@ -70,10 +70,10 @@ compaction_readahead_size=2097152<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_IOPS.png"/>
 </center>
 <div style="float:left;border:solid 1px 000;margin:2px;">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png"  width="50%" height="50%">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png"  width="40%" height="50%">
 </div>&nbsp;
 <div style="float:left;border:solid 1px 000;margin:2px;">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="50%" height="50%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="40%" height="50%" >
 </div>
 <div style="float:left;border:solid 1px 000;margin:2px;">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png"  width="50%“ height="50%" >
