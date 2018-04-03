@@ -131,23 +131,25 @@ application not enabled on 1 pool(s)
 		<td>9.51%</td>
 	</tr>
 </table>
-不论俩客户端是写相同或不同image，image=30，45，60过程中，**bluestore_shard_finishers=true**的IOPS性能都要更优。而且image=60时，IOPS性能提升的更明显（近15%和10%）。
+不论俩客户端是写相同或不同image，image=30，45，60过程中，**bluestore_shard_finishers=true**的IOPS性能都要更优。而且image=60时，IOPS性能提升的更明显（近15%和10%）。<br>
 **`综上所述，bluestore_shard_finishers=true，对多客户端下的多image随机写性能有积极促进作用。`**
 #### 3.5 附加实验
-在基于任务一环境(3-osd)基础上，添加实验环境为1-client情况下，参数**bluestore_shard_finishers**的影响
-共8组附加实验
-（1）**bluestore_shard_finishers=`true`**
-实验3-1：1-client随机写1个image
-实验3-2：1-client随机写8个image
-实验3-3：1-client随机写15个image
-实验3-4：1-client随机写30个image
-（2）**bluestore_shard_finishers=`false（默认）`**
-实验4-1：1-client随机写1个image
-实验4-2：1-client随机写8个image
-实验4-3：1-client随机写15个image
-实验4-4：1-client随机写30个image
+在基于任务一环境(3-osd)基础上，添加实验环境为1-client情况下，参数**bluestore_shard_finishers**的影响<br>
+共8组附加实验<br>
+（1）**bluestore_shard_finishers=`true`**<br>
+实验3-1：1-client随机写1个image<br>
+实验3-2：1-client随机写8个image<br>
+实验3-3：1-client随机写15个image<br>
+实验3-4：1-client随机写30个image<br>
+（2）**bluestore_shard_finishers=`false（默认）`**<br>
+实验4-1：1-client随机写1个image<br>
+实验4-2：1-client随机写8个image<br>
+实验4-3：1-client随机写15个image<br>
+实验4-4：1-client随机写30个image<br>
 实验结果
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task3_3.png)
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task3_3.png">
+</center>
 #### 3.6 结果分析及结论
 可以看的出，随着image的数量增加，**bluestore_shard_finishers**参数对IOPS性能影响越来越大，也越来越好（IOPS增长率在持续增加），如下表所示：
 |image数|IOPS增长率|
@@ -157,74 +159,82 @@ application not enabled on 1 pool(s)
 |15|12.68%|
 |30|22.60%|
 `综上可得，bluestore_shard_finishers参数对单客户端下多image随机写操作性能有促进作用。`
-
 ## 任务四 测试osd_op_num_shards参数对4k-randwrite的影响
 调节osd_op_num_shards参数值，对比IOPS变化
 #### 4.1 环境搭建
-在基于任务一基础上的环境（3-osd），来完成该任务
-默认osd_op_num_shards=0，
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_1.png)
-**root@deph-testebs-ssd015.py:/etc/ceph$ vim ceph.conf**
+在基于任务一基础上的环境（3-osd），来完成该任务<br>
+默认osd_op_num_shards=0，<br>
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_1.png">
+</center>
+**root@deph-testebs-ssd015.py:/etc/ceph$ vim ceph.conf**<br>
 osd_op_num_shards=4
-
 #### 4.2 osd_op_num_shards参数分析
-阅读ceph源码，查看**osd_op_num_shards**参数的计算源码，如下所示（主要看第二幅图）：
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_2.png)
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png)
-源码中有两个函数，**get_num_op_shards()**和**get_num_op_threads()**，是分别求OSD::op_shardedwq中存储io的队列个数及OSD::op_shardedwq中总的io分发线程数
-`总线程数=队列数\*每个队列线程数`
-可看出，当**osd_op_num_shards**为true时，返回**osd_op_num_shards**的值；否则就看返回**osd_op_num_shards_hhd**或**osd_op_num_shards_ssd**的值，源码中**store_is_rotational**是bool类型，表示设备属性（默认是true也即是hhd）。
-而求线程数函数**get_num_op_threads()**，同理也是以变量**osd_op_num_threads_per_shard**和**store_is_rotational**来决定用哪个公式。
+阅读ceph源码，查看**osd_op_num_shards**参数的计算源码，如下所示（主要看第二幅图）：<br>
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_2.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png">
+</center>
+源码中有两个函数，**get_num_op_shards()**和**get_num_op_threads()**，是分别求OSD::op_shardedwq中存储io的队列个数及OSD::op_shardedwq中总的io分发线程数<br>
+`总线程数=队列数\*每个队列线程数`<br>
+可看出，当**osd_op_num_shards**为true时，返回**osd_op_num_shards**的值；否则就看返回**osd_op_num_shards_hhd**或**osd_op_num_shards_ssd**的值，源码中**store_is_rotational**是bool类型，表示设备属性（默认是true也即是hhd）。<br>
+而求线程数函数**get_num_op_threads()**，同理也是以变量**osd_op_num_threads_per_shard**和**store_is_rotational**来决定用哪个公式。<br>
 ######（1）默认情况下，查看相关参数值：
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png)
-可看到**osd_op_num_shards=0**和**osd_op_num_threads_per_shard=0**，所以计算线程总数公式=**osd_op_num_shards_ssd\*osd_op_num_threads_per_shard_ssd=8\*2=`16`**
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png">
+</center>
+可看到**osd_op_num_shards=0**和**osd_op_num_threads_per_shard=0**，所以计算线程总数公式=**osd_op_num_shards_ssd\*osd_op_num_threads_per_shard_ssd=8\*2=`16`**<br>
 ######（2）当通过ceph.conf文件设置参数osd_op_num_shards=2，重启集群
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png)
-通过上面分析，因此总线程数=osd_op_num_shards\*osd_op_num_threads_per_shard_ssd=2\*2=4
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png">
+</center>
+通过上面分析，因此总线程数=osd_op_num_shards\*osd_op_num_threads_per_shard_ssd=2\*2=`4`<br>
 * 测试
-
     在客户端运行fio的4k-randwrite操作，同时在服务端多次运行 top -H -p $pid -n 1 | grep tp_osd_tp ，计算有多少个线程，如下：
-    ![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png)
-    ![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png)
-    ![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_6.png)
+    <center>
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png">
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
+    </center>
     看得出一直都是4个线程。故我们的计算方式是正确的。下面来看真正的实验吧。
 
 #### 4.3 实验设置
-共20组实验
-**（1）osd_op_num_shards=0（默认），即总线程数=8\*2=`16`**
-实验1-1：1-client随机写1个image
-实验1-2：1-client随机写8个image
-实验1-3：1-client随机写15个image
-实验1-4：1-client随机写30个image
-**（2）osd_op_num_shards=2，即总线程数=2\*2=`4`**
-实验2-1：1-client随机写1个image
-实验2-2：1-client随机写8个image
-实验2-3：1-client随机写15个image
-实验2-4：1-client随机写30个image
-**（3）osd_op_num_shards=4，即总线程数=4\*2=`8`**
-实验3-1：1-client随机写1个image
-实验3-2：1-client随机写8个image
-实验3-3：1-client随机写15个image
-实验3-4：1-client随机写30个image
-**（4）osd_op_num_shards=8，即总线程数=8\*2=`16`**
-实验4-1：1-client随机写1个image
-实验4-2：1-client随机写8个image
-实验4-3：1-client随机写15个image
-实验4-4：1-client随机写30个image
-**（5）osd_op_num_shards=16，即总线程数=16\*2=`32`**
-实验5-1：1-client随机写1个image
-实验5-2：1-client随机写8个image
-实验5-3：1-client随机写15个image
-实验5-4：1-client随机写30个image
+共20组实验<br>
+**（1）osd_op_num_shards=0（默认），即总线程数=8\*2=`16`**<br>
+实验1-1：1-client随机写1个image<br>
+实验1-2：1-client随机写8个image<br>
+实验1-3：1-client随机写15个image<br>
+实验1-4：1-client随机写30个image<br>
+**（2）osd_op_num_shards=2，即总线程数=2\*2=`4`**<br>
+实验2-1：1-client随机写1个image<br>
+实验2-2：1-client随机写8个image<br>
+实验2-3：1-client随机写15个image<br>
+实验2-4：1-client随机写30个image<br>
+**（3）osd_op_num_shards=4，即总线程数=4\*2=`8`**<br>
+实验3-1：1-client随机写1个image<br>
+实验3-2：1-client随机写8个image<br>
+实验3-3：1-client随机写15个image<br>
+实验3-4：1-client随机写30个image<br>
+**（4）osd_op_num_shards=8，即总线程数=8\*2=`16`**<br>
+实验4-1：1-client随机写1个image<br>
+实验4-2：1-client随机写8个image<br>
+实验4-3：1-client随机写15个image<br>
+实验4-4：1-client随机写30个image<br>
+**（5）osd_op_num_shards=16，即总线程数=16\*2=`32`**<br>
+实验5-1：1-client随机写1个image<br>
+实验5-2：1-client随机写8个image<br>
+实验5-3：1-client随机写15个image<br>
+实验5-4：1-client随机写30个image<br>
 #### 5.4 实验结果
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_6.png)
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task4_7.png)
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_6.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_7.png">
+</center>
 #### 5.5 结果分析及总结
-由上图可以看出，五组实验的各四小组实验结果的IOPS都相差不大，参数**osd_op_num_shards**效果不明显。
-（1）当1-image时，5组实验中，**osd_op_num_shards**默认参数的IOPS最高，性能最好。
-（2）当8-image时，各组实验都不差，默认参数第二高，表示调参没起到效果。
-（3）当15-image时，默认参数IOPS最高，性能最好。
-（4）当30-image时，默认参数IOPS最高，性能最好。
-`综上所述，参数osd_op_num_shards对集群IOPS性能影响不明显。`
-
+由上图可以看出，五组实验的各四小组实验结果的IOPS都相差不大，参数**osd_op_num_shards**效果不明显。<br>
+（1）当1-image时，5组实验中，**osd_op_num_shards**默认参数的IOPS最高，性能最好。<br>
+（2）当8-image时，各组实验都不差，默认参数第二高，表示调参没起到效果。<br>
+（3）当15-image时，默认参数IOPS最高，性能最好。<br>
+（4）当30-image时，默认参数IOPS最高，性能最好。<br>
+`综上所述，参数osd_op_num_shards对集群IOPS性能影响不明显。`<br>
 实验结果源文件[下载](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-04-01-optimize-parameter-from-bluestore/bluestore-performance-optimise.xlsx)
