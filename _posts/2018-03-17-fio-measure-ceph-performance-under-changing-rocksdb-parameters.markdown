@@ -17,12 +17,12 @@ header-img: ""
 ### rocksdb导出参数
 ![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/init_rocksdb_parameters.png)
 接下来对参数进行说明：<br>
-"bluestore_rocksdb_options": "compression=kNoCompression,max_write_buffer_number=4,min_write_buffer_number_to_merge=1,recycle_log_file_num=4,write_buffer_size=268435456,writable_file_max_buffer_size=0,compaction_readahead_size=2097152"<br>
+"bluestore_rocksdb_options": "compression=kNoCompression,max_write_buffer_number=4,min_write_buffer_number_to_merge=1,<br>recycle_log_file_num=4,write_buffer_size=268435456,writable_file_max_buffer_size=0,compaction_readahead_size=2097152"<br>
 `Compression=kNoCompression`：表示数据不进行压缩。对每个SST文件，数据块和索引块都会被单独压缩，默认是Snappy<br>
 `write_buffer_size=268435456（2^28）`：memtable的最大size，如果超过这个值，RocksDB会将其变成immutable memtable，并使用另一个新的memtable。插入数据时RocksDB首先会将其放到memtable里，所以写入很快，当一个memtable full之后，RocksDB会将该memtable变成immutable，用另一个新的memtable来存储新的写入，immutable的memtable就被等待flush到level0<br>
 `max_write_buffer_number=4`：最大的memtable个数。如果active memtable都full了，并且active memtable+immutable memtable个数超过max_write_buffer_number，则RocksDB会停止写入，通常原因是写入太快而flush不及时造成的。<br>
 `min_write_buffer_number_to_merge=1`：在flush到level0之前，最少需要被merge的memtable个数，如min_write_buffer_number_to_merge =2，那么至少当有两个immutable的memtable时，RocksDB才会将这两个immutable memTable先merge，再flush到level0。Merge 的好处是，譬如在一个key在不同的memtable里都有修改，可以merge形成一次修改。min_write_buffer_number_to_merge太大会影响读取性能，因为Get会遍历所有的memtable来看该key是否存在。<br>
-`compaction_readahead_size=2097152(2^21)`：预读大小，在进行compression时，执行更大的数据读取，
+`compaction_readahead_size=2097152(2^21)`：预读大小，在进行compression时，执行更大的数据读取<br>
 `writable_file_max_buffer_size=0`：可写文件的最大写缓存<br>
 ### 修改rocksdb参数
 首先分为服务端机器server_host和客户端机器client_host<br>
@@ -42,7 +42,7 @@ bluestore rocksdb options = compression=kNoCompression,max_write_buffer_number=8
 **systemctl restart ceph-osd@0.service**<br>
 **systemctl restart ceph-osd@1.service**<br>
 **systemctl restart ceph-osd@2.service**<br>
-`注`：osd一个一个的重启，不要快速重启三个，等一个osd重启并运行正常后（可用**$ceph osd tree查看**），再重启第二个，不然集群容易挂掉
+`注`：osd一个一个的重启，不要快速重启三个，等一个osd重启并运行正常后（可用**$ceph osd tree**查看），再重启第二个，不然集群容易挂掉
 
 ### 查看rocksdb参数是否有变化
 **ceph daemon osd.0 config show | grep bluestore_rocksdb**<br>
@@ -56,7 +56,7 @@ bluestore rocksdb options = compression=kNoCompression,max_write_buffer_number=8
 （3）randwrite命令<br>
 	**$fio -direct=1 -iodepth=256 -ioengine=rbd -pool=ymg -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=parameter1**
 ## 对比实验及结果
-#### 【Parameter0实验-原始参数】<br>
+#### 【Parameter0实验-原始参数】
 compression=kNoCompression<br>
 max_write_buffer_number=4<br>
 min_write_buffer_number_to_merge=1<br>
@@ -107,7 +107,7 @@ write_buffer_size=1073741824<br>
 writable_file_max_buffer_size=2<br>
 compaction_readahead_size=8388608<br>
 **时间段：**17:31:00～17:36:00<br>
-**结果如下**<br>
+**结果如下**
 <center>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_IOPS.png">
 </center>
@@ -128,7 +128,7 @@ write_buffer_size=2147483648<br>
 writable_file_max_buffer_size=4<br>
 compaction_readahead_size=16777216<br>
 **时间段：**17:49:01～17:54:01<br>
-**结果如下**<br>
+**结果如下**
 <center>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter3_IOPS.png">
 </center>

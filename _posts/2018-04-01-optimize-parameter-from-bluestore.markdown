@@ -110,7 +110,7 @@ application not enabled on 1 pool(s)
 <table>
 	<tr>
 		<td rowspan="4"><strong>2-client写不同image</strong></td>
-		<td><strong>image数</strong>></td>
+		<td><strong>image数</strong></td>
 		<td><strong>IOPS增长率</strong></td>
 		<td rowspan="4"><strong>2-client写相同image</strong></td>
 		<td><strong>image数</strong></td>
@@ -156,14 +156,30 @@ application not enabled on 1 pool(s)
 </center>
 #### 3.6 结果分析及结论
 可以看的出，随着image的数量增加，**bluestore_shard_finishers**参数对IOPS性能影响越来越大，也越来越好（IOPS增长率在持续增加），如下表所示：
-|image数|IOPS增长率|
-|:-----:|:-------|
-|1|-7.64%|
-|8|11.00%|
-|15|12.68%|
-|30|22.60%|
+<table>
+	<tr>
+		<td>image数</td>
+		<td>IOPS增长率</td>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>-7.64%</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td>11.00%</td>
+	</tr>
+	<tr>
+		<td>15</td>
+		<td>12.68%</td>
+	</tr>
+	<tr>
+		<td>30</td>
+		<td>22.60%</td>
+	</tr>
+</table>
 `综上可得，bluestore_shard_finishers参数对单客户端下多image随机写操作性能有促进作用。`
-## 任务四 测试osd_op_num_shards参数对4k-randwrite的影响
+## 任务四 测试osd_op_num_shards参数的影响
 调节osd_op_num_shards参数值，对比IOPS变化
 #### 4.1 环境搭建
 在基于任务一基础上的环境（3-osd），来完成该任务<br>
@@ -180,7 +196,7 @@ osd_op_num_shards=4
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png">
 </center>
 源码中有两个函数，**get_num_op_shards()**和**get_num_op_threads()**，是分别求OSD::op_shardedwq中存储io的队列个数及OSD::op_shardedwq中总的io分发线程数<br>
-`总线程数=队列数\*每个队列线程数`<br>
+`总线程数=队列数*每个队列线程数`<br>
 可看出，当**osd_op_num_shards**为true时，返回**osd_op_num_shards**的值；否则就看返回**osd_op_num_shards_hhd**或**osd_op_num_shards_ssd**的值，源码中**store_is_rotational**是bool类型，表示设备属性（默认是true也即是hhd）。<br>
 而求线程数函数**get_num_op_threads()**，同理也是以变量**osd_op_num_threads_per_shard**和**store_is_rotational**来决定用哪个公式。<br>
 ###### （1）默认情况下，查看相关参数值：
@@ -188,7 +204,7 @@ osd_op_num_shards=4
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png">
 </center>
 可看到**osd_op_num_shards=0**和**osd_op_num_threads_per_shard=0**，所以计算线程总数公式=**osd_op_num_shards_ssd\*osd_op_num_threads_per_shard_ssd=8\*2=`16`**<br>
-###### （2）当通过ceph.conf文件设置参数osd_op_num_shards=2，重启集群
+###### （2）通过ceph.conf文件设置参数osd_op_num_shards=2，重启集群
 <center>
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
 </center>
