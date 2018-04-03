@@ -38,7 +38,7 @@ application not enabled on 1 pool(s)
 实验2-5：2-client各自随机写60个不同image
 #### 1.3 实验结果
 <center>
-<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task1_1.png"/>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task1_1.png"/>
 </center>
 #### 1.4 结果分析及结论
 由上图可以知道，在【每核利用率】列，可以知道，此时集群没有达到CPU瓶颈，这是符合我们测试的要求；<br>
@@ -53,19 +53,21 @@ application not enabled on 1 pool(s)
 实验1-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下：
 <center>
-<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="50%" /><img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="50%" />
 </center>
 实验1-2：两个客户端并发4k随机写同一个image的不同位置(offset)（分区不同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下(创建image 时，每个image设置的为20G)：
 <center>
-<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_3.png" height="50%" /><img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_4.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_3.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_4.png" height="50%" />
 </center>
 参照任务四，再加了下面两组实验：<br>
 实验2-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）**bluestore_shard_finishers=`true`**<br>
 实验2-2：两个客户端并发4k随机写同一个image的不同位置(offset)（分区不同）**bluestore_shard_finishers=`true`**
 #### 2.3 实验结果
 <center>
-<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_5.png"/>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_5.png"/>
 </center>
 #### 2.4 结果分析与结论
 （1）可以看出2-client并发写单个image，其IOPS比1-client随机写IOPS要低很多。<br>
@@ -99,8 +101,10 @@ application not enabled on 1 pool(s)
 实验2-5：2-client并发写45个相同的images<br>
 实验2-6：2-client并发写60个相同的images
 #### 3.3 实验结果
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task3_1.png)
-![](/img/2018-04-01-optimize-parameter-from-bluestore/task3_2.png)
+<center>
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task3_1.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task3_2.png">
+</center>
 #### 3.4 结果分析与总结
 可以看的出，随着image的数量增加，bluestore_shard_finishers参数的影响正在变得明显（IOPS增长率在持续增加），如下表所示：
 <table>
@@ -179,25 +183,24 @@ osd_op_num_shards=4
 `总线程数=队列数\*每个队列线程数`<br>
 可看出，当**osd_op_num_shards**为true时，返回**osd_op_num_shards**的值；否则就看返回**osd_op_num_shards_hhd**或**osd_op_num_shards_ssd**的值，源码中**store_is_rotational**是bool类型，表示设备属性（默认是true也即是hhd）。<br>
 而求线程数函数**get_num_op_threads()**，同理也是以变量**osd_op_num_threads_per_shard**和**store_is_rotational**来决定用哪个公式。<br>
-######（1）默认情况下，查看相关参数值：
+###### （1）默认情况下，查看相关参数值：
 <center>
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png">
 </center>
 可看到**osd_op_num_shards=0**和**osd_op_num_threads_per_shard=0**，所以计算线程总数公式=**osd_op_num_shards_ssd\*osd_op_num_threads_per_shard_ssd=8\*2=`16`**<br>
-######（2）当通过ceph.conf文件设置参数osd_op_num_shards=2，重启集群
+###### （2）当通过ceph.conf文件设置参数osd_op_num_shards=2，重启集群
 <center>
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_3.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
 </center>
 通过上面分析，因此总线程数=osd_op_num_shards\*osd_op_num_threads_per_shard_ssd=2\*2=`4`<br>
 * 测试
     在客户端运行fio的4k-randwrite操作，同时在服务端多次运行 top -H -p $pid -n 1 | grep tp_osd_tp ，计算有多少个线程，如下：
     <center>
-    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_4.png">
-    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
-    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_5.png">
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_6.png">
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_7.png">
+    	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_8.png">
     </center>
     看得出一直都是4个线程。故我们的计算方式是正确的。下面来看真正的实验吧。
-
 #### 4.3 实验设置
 共20组实验<br>
 **（1）osd_op_num_shards=0（默认），即总线程数=8\*2=`16`**<br>
@@ -225,10 +228,10 @@ osd_op_num_shards=4
 实验5-2：1-client随机写8个image<br>
 实验5-3：1-client随机写15个image<br>
 实验5-4：1-client随机写30个image<br>
-#### 5.4 实验结果
+#### 4.4 实验结果
 <center>
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_6.png">
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_7.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_9.png">
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_10.png">
 </center>
 #### 5.5 结果分析及总结
 由上图可以看出，五组实验的各四小组实验结果的IOPS都相差不大，参数**osd_op_num_shards**效果不明显。<br>
