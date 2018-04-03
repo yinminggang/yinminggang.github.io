@@ -5,8 +5,6 @@ subtitle:   "分析ceph进行4k随机写时哪些线程及其函数较为耗资�
 date:       2018-03-17 10:00:00
 author:     "YMG"
 header-img: "img/post-bg-nextgen-web-pwa.jpg"
-header-mask: 0.3
-catalog:    true
 tags:
     - 云存储
     - ceph
@@ -205,37 +203,43 @@ Thread: 28===8109===tp_osd_tp
 ```
 具体文件可[下载](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-gdbprof-analysis-ceph-performance/1-image-important-threads.txt)
 
-由上面结果可以知道6个线程中哪些函数较为消耗资源，如下所示：
+由上面结果可以知道6个线程中哪些函数较为消耗资源，如下所示：<br>
 `（1）Thread: 2===21792===rokcsdb::bg0：`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread2-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread2-2.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread2-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread2-2.png" width="70%" height="70%">
+</center>
 `（2）Thread: 28===8109===tp_osd_tp：`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-2.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-3.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-2.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread28-3.png" width="70%" height="70%">
+</center>
 `（3）Thread: 51===7973===bstore_kv_final`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-2.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-3.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-2.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread51-3.png" width="70%" height="70%">
+</center>
 `（4）Thread: 52===7972===bstore_kv_sync`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-2.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-3.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-4.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-5.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-2.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-3.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-4.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread52-5.png" width="70%" height="70%">
+</center>
 `（5）Thread: 53===7971===finisher`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread53-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread53-2.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread53-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread53-2.png" width="70%" height="70%">
+</center>
 `（6）Thread: 68===7926===msgr_worker_0`
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-1.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-2.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-3.png)
-![](/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-4.png)
-
+<center>
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-1.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-2.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-3.png" width="70%" height="70%">
+  <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/thread68-4.png" width="70%" height="70%">
+</center>
 **想得到所有69个线程的函数堆栈情况，可去[下载](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-gdbprof-analysis-ceph-performance/1-image-all-threads.txt)**
 
