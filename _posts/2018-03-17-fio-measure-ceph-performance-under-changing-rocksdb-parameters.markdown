@@ -69,13 +69,19 @@ compaction_readahead_size=2097152<br>
 <center>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_IOPS.png"/>
 </center>
+<div style="float:left;border:solid 1px 000;margin:2px;">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png"  width="200" height="260" >
+</div>
+<div style="float:left;border:solid 1px 000;margin:2px;">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="200" height="260" >
+</div>
 <figure class="half">
-    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png" height="50%" width="50%" />
-    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="50%" height="50%" />
+    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png" height="50%" width="50%" >
+    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="50%" height="50%" >
 </figure>
 <figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png" height="50%" width="50%" />
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_cpu_ratio.png" height="50%" width="50%" />
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png" height="50%" width="50%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_cpu_ratio.png" height="50%" width="50%" >
 </figure>
 #### 【Parameter1实验】
 compression=kNoCompression<br>
@@ -91,12 +97,12 @@ compaction_readahead_size=8388608<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_IOPS.png"/>
 </center>
 <figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_ioutil.png" height="50%" width="30%" />
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_write_throughput.png" height="50%" width="30%" />
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_ioutil.png" height="50%" width="100px" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_write_throughput.png" height="50%" width="100px" >
 </figure>
 <figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_writeIOPS.png" height="50%" width="30%" />
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_cpu_ratio.png" height="50%" width="30%" />
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_writeIOPS.png" height="50%" width="30%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_cpu_ratio.png" height="50%" width="30%" >
 </figure>
 #### 【Parameter2实验】
 compression=kNoCompression<br>
@@ -112,8 +118,8 @@ compaction_readahead_size=8388608<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_IOPS.png">
 </center>
 <figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_ioutil.png" height="50%" width="50%" >
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_write_throughput.png" height="50%" width="50%">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_ioutil.png" height="50%" width="20%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_write_throughput.png" height="50%" width="20%">
 </figure>
 <figure>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_writeIOPS.png" width="50%" height="50%">
