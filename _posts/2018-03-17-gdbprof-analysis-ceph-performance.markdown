@@ -17,38 +17,36 @@ tags:
 >[gdbprof源码](https://github.com/markhpc/gdbprof)
 >本文采用的[gdbprof优化版本](https://github.com/liupan1111/gdbprof)<br>
 >[本人forked版本](https://github.com/yinminggang/gdbprof),随时欢迎
-
 ## 实验环境
-搭建ceph-osd集群（本文用了3个osd.0、osd.1、osd.2）
-服务端：server_host（osd）
-客户端：client_host（mons、mgrs）
-服务端需安装gdb，客户端需安装fio（都自行解决），下载[gdbprof](https://github.com/liupan1111/gdbprof)
-
+搭建ceph-osd集群（本文用了3个osd.0、osd.1、osd.2）<br>
+服务端：server_host（osd）<br>
+客户端：client_host（mons、mgrs）<br>
+服务端需安装gdb，客户端需安装fio（都自行解决），下载[gdbprof](https://github.com/liupan1111/gdbprof)<br>
 ## 实验过程
 ###（1）简单查看下集群是否正常：
-**$ceph osd tree**
+**$ceph osd tree**<br>
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_health1.png)
-**$ceph -s**
+**$ceph -s**<br>
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_heath2.png)
 ###（2）查看所有osd对应进程及进程号
-**$ps aux|grep ceph-osd**
+**$ps aux|grep ceph-osd**<br>
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/ceph_cluster_process.png)
 ## 实验一 求解耗系统资源的线程（单image和10-images）
-客户端（server_host）操作：
-fio 创建pool（或默认rbd）和image，并进行后续操作
-**$ rbd create --pool ymg --image img01 --size 40G**
-先进行填充实验
-**$fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=write -bs=1M -size=40G -ramp_time=5 -group_reporting -name=full-fill**
-再进行4k-randWrite的单image操作
-**$ fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=one_gdbprof**
-与此同时，服务端机器(client_host)需要并行执行top命令
-**$top -p 7922 -H**
-也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：
+客户端（server_host）操作：<br>
+fio 创建pool（或默认rbd）和image，并进行后续操作<br>
+**$ rbd create --pool ymg --image img01 --size 40G**<br>
+先进行填充实验<br>
+**$fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=write -bs=1M -size=40G -ramp_time=5 -group_reporting -name=full-fill**<br>
+再进行4k-randWrite的单image操作<br>
+**$ fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=one_gdbprof**<br>
+与此同时，服务端机器(client_host)需要并行执行top命令<br>
+**$top -p 7922 -H**<br>
+也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：<br>
 ![](/img/2018-03-17-gdbprof-analysis-ceph-performance/1_image_sys_load.png)
 `对比实验`：10个images的4k-randWrite的实验操作：
-**$ BS=4k RW=randwrite fio images.fio**
-得先创建10个images
-**$rbd create ymg/img00 -s 40G**
+**$ BS=4k RW=randwrite fio images.fio**<br>
+得先创建10个images<br>
+**$rbd create ymg/img00 -s 40G**<br>
 images.fio内容如下所示：
 ```
   [global]
