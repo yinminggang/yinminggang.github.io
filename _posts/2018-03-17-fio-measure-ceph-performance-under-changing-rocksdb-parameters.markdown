@@ -77,7 +77,7 @@ compaction_readahead_size=2097152<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png" height="50%" width="50%" />
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_cpu_ratio.png" height="50%" width="50%" />
 </figure>
-####【Parameter1实验】
+#### 【Parameter1实验】
 compression=kNoCompression<br>
 max_write_buffer_number=8<br>
 min_write_buffer_number_to_merge=4<br>
@@ -95,10 +95,10 @@ compaction_readahead_size=8388608<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_write_throughput.png" height="50%" width="40%" />
 </figure>
 <figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_writeIOPS.png" height="50%" width="40%" />
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_cpu_ratio.png" height="50%" width="40%" />
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_writeIOPS.png" height="50%" width="30%" />
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter1_cpu_ratio.png" height="50%" width="30%" />
 </figure>
-####【Parameter2实验】
+#### 【Parameter2实验】
 compression=kNoCompression<br>
 max_write_buffer_number=16<br>
 min_write_buffer_number_to_merge=8<br>
@@ -119,7 +119,7 @@ compaction_readahead_size=8388608<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter3实验】
+#### 【Parameter3实验】
 compression=kNoCompression<br>
 max_write_buffer_number=32<br>
 min_write_buffer_number_to_merge=16<br>
@@ -140,7 +140,7 @@ compaction_readahead_size=16777216<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter3_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter3_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter4实验】
+#### 【Parameter4实验】
 compression=kNoCompression<br>
 max_write_buffer_number=32<br>
 min_write_buffer_number_to_merge=16<br>
@@ -148,7 +148,7 @@ write_buffer_size=2147483648<br>
 writable_file_max_buffer_size=4<br>
 compaction_readahead_size=16777216<br>
 `【本实验暂没做】`
-####【Parameter5实验】
+#### 【Parameter5实验】
 compression=kNoCompression<br>
 max_write_buffer_number=64<br>
 min_write_buffer_number_to_merge=16<br>
@@ -169,7 +169,7 @@ compaction_readahead_size= 33554432<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter5_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter5_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter6实验】
+#### 【Parameter6实验】
 compression=kNoCompression<br>
 max_write_buffer_number=64<br>
 min_write_buffer_number_to_merge=8<br>
@@ -190,7 +190,7 @@ compaction_readahead_size= 33554432<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter6_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter6_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter7实验】
+#### 【Parameter7实验】
 compression=kNoCompression<br>
 max_write_buffer_number=64<br>
 min_write_buffer_number_to_merge=16<br>
@@ -211,7 +211,7 @@ compaction_readahead_size= 33554432<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter7_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter7_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter8实验】
+#### 【Parameter8实验】
 compression=kNoCompression<br>
 max_write_buffer_number=256<br>
 min_write_buffer_number_to_merge=64<br>
@@ -222,7 +222,7 @@ compaction_readahead_size= 134217728<br>
 **时间段：**10:55:01～11:00:01<br>
 **结果如下**
 <center>
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter2_IOPS.png">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter8_IOPS.png">
 </center>
 <figure class="half">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter8_ioutil.png" height="50%" width="50%" >
@@ -232,7 +232,7 @@ compaction_readahead_size= 134217728<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter8_writeIOPS.png" width="50%" height="50%">
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter8_cpu_ratio.png" width="50%" height="50%">
 </figure>
-####【Parameter9实验】
+#### 【Parameter9实验】
 compression=kNoCompression<br>
 max_write_buffer_number=256<br>
 min_write_buffer_number_to_merge=4<br>
@@ -242,13 +242,18 @@ writable_file_max_buffer_size=134217728<br>
 compaction_readahead_size= 134217728<br>
 **时间段：**14:44:00~14:49:00<br>
 **结果如下**
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_IOPS.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_ioutil.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_write_throughput.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_writeIOPS.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_cpu_radio.png)
-
-####【Parameter10实验】
+<center>
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_IOPS.png">
+</center>
+<figure class="half">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_ioutil.png" height="50%" width="50%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_write_throughput.png" height="50%" width="50%">
+</figure>
+<figure>
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_writeIOPS.png" width="50%" height="50%">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter9_cpu_ratio.png" width="50%" height="50%">
+</figure>
+#### 【Parameter10实验】
 compression=kNoCompression<br>
 max_write_buffer_number=256<br>
 min_write_buffer_number_to_merge=2<br>
@@ -257,14 +262,19 @@ writable_file_max_buffer_size=32768<br>
 compaction_readahead_size=32768<br>
 **时间段：**15:45:50～15:50:50<br>
 **结果如下**
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_IOPS.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_ioutil.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_write_throughput.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_writeIOPS.png)
-![](/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_cpu_radio.png)
-
+<center>
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_IOPS.png">
+</center>
+<figure class="half">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_ioutil.png" height="50%" width="50%" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_write_throughput.png" height="50%" width="50%">
+</figure>
+<figure>
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_writeIOPS.png" width="50%" height="50%">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter10_cpu_ratio.png" width="50%" height="50%">
+</figure>
 ## 总结
-根据上面的10组实验结果，我们实验的参数调节是参照一些文章，[如](https://www.jianshu.com/p/a2892a161a7b)我们进行了总结，发现机器的写速度约为40MB/s，让我们以parameter10实验为例，假如我们write_buffer_size=536870912(2^29),也即是64MB，也即是每1.6s产生一个新的memtable；min_write_buffer_number_to_merge=2，也就是每产生2个memtable，就进行合并操作，即每3.2s；根据max_write_buffer_number=256意思，我们应该尽量设置大一些；而参数writable_file_max_buffer_size和compaction_readahead_size应该设置差不多大小。其实parameter9和parameter10是个对比。[参考](https://www.jianshu.com/p/8e0018b6a8b6)
-我们将结果进行了统计，[详见xlsx文件](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/Ceph-osd-4kRandWrite测试结果统计.xlsx)
+根据上面的10组实验结果，我们实验的参数调节是参照一些文章，[如](https://www.jianshu.com/p/a2892a161a7b)我们进行了总结，发现机器的写速度约为40MB/s，让我们以parameter10实验为例，假如我们write_buffer_size=536870912(2^29),也即是64MB，也即是每1.6s产生一个新的memtable；min_write_buffer_number_to_merge=2，也就是每产生2个memtable，就进行合并操作，即每3.2s；根据max_write_buffer_number=256意思，我们应该尽量设置大一些；而参数writable_file_max_buffer_size和compaction_readahead_size应该设置差不多大小。其实parameter9和parameter10是个对比。[参考](https://www.jianshu.com/p/8e0018b6a8b6)<br>
+我们将结果进行了统计，[详见xlsx文件](https://github.com/yinminggang/yinminggang.github.io/tree/master/files/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/Ceph-osd-4kRandWrite测试结果统计.xlsx)<br>
 `由结果可以知道，我们的调参是有效的，其中第9组实验结果表现较好，当然，优化还是要持续不断。`
 
