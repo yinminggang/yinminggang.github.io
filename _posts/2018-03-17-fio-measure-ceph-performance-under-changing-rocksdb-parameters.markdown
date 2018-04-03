@@ -70,19 +70,17 @@ compaction_readahead_size=2097152<br>
 	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_IOPS.png"/>
 </center>
 <div style="float:left;border:solid 1px 000;margin:2px;">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png"  width="200" height="260" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png"  width="50%" height="50%">
+</div>&nbsp;
+<div style="float:left;border:solid 1px 000;margin:2px;">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="50%" height="50%" >
 </div>
 <div style="float:left;border:solid 1px 000;margin:2px;">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="200" height="260" >
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png"  width="50%“ height="50%" >
+</div>&nbsp;
+<div style="float:left;border:solid 1px 000;margin:2px;">
+	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_cpu_ratio.png" width="50%" height="50%" >
 </div>
-<figure class="half">
-    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_ioutil.png" height="50%" width="50%" >
-    <img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_write_throughput.png" width="50%" height="50%" >
-</figure>
-<figure class="half">
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_writeIOPS.png" height="50%" width="50%" >
-	<img src="/img/2018-03-17-fio-measure-ceph-performance-under-changing-rocksdb-parameters/parameter0_cpu_ratio.png" height="50%" width="50%" >
-</figure>
 #### 【Parameter1实验】
 compression=kNoCompression<br>
 max_write_buffer_number=8<br>
