@@ -46,7 +46,7 @@ tags:
 **$ fio -direct=1 -iodepth=256 -ioengine=rbd -pool=rbd -rbdname=img01 -rw=randwrite -bs=4K -runtime=300 -numjobs=1 -ramp_time=5 -group_reporting -name=one_gdbprof**<br>
 （4）与此同时，服务端机器(client_host)需要并行执行top命令<br>
 **$top -p 7922 -H**<br>
-也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：<br>
+也即追踪进程7922(随意选一个)在过程中的所有线程对资源消耗情况，结果如下所示：
 <center>
   <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/1_image_sys_load.png">
 </center>
@@ -91,7 +91,7 @@ images.fio内容如下所示：
   rbdname=img09
 ```
 服务端执行 **$top -p 7922 -H**<br>
-结果如下所示<br>
+结果如下所示
 <center>
   <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/10_images_sys_load.png">
 </center>
@@ -107,7 +107,7 @@ line140，调节采样运行时间（无需太短或长），据说单位为秒�
 </center>
 **$sudo gdb -ex 'set pagination off' -ex 'attach 7922' -ex 'source gdbprof.py' -ex 'profile begin' -ex 'quit'**<br>
 注：在运行过程中，可能会出现一些下面的debuginfo信息<br>
-**$yum install ceph-debuginfo.x86_64 --enablerepo didi_deph**<br>
+**$yum install ceph-debuginfo.x86_64 --enablerepo didi_deph**
 <center>
   <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/miss_debuginfo.png">
 </center>
@@ -115,7 +115,7 @@ line140，调节采样运行时间（无需太短或长），据说单位为秒�
 先找出打印出的线程函数信息与上面线程的对应关系：<br>
 **$gdb**<br>
 **(gdb) attach 7922**<br>
-**(gdb) info threads**<br>
+**(gdb) info threads**
 <center>
   <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/threads_info1.png">
   <img src="/img/2018-03-17-gdbprof-analysis-ceph-performance/threads_info2.png">

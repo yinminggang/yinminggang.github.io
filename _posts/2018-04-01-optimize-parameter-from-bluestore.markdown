@@ -53,14 +53,14 @@ application not enabled on 1 pool(s)
 实验1-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下：
 <center>
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="50%" />
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="40%" width="80%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="40%" width="80%" />
 </center>
 实验1-2：两个客户端并发4k随机写同一个image的不同位置(offset)（分区不同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下(创建image 时，每个image设置的为20G)：
 <center>
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_3.png" height="50%" />
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_4.png" height="50%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_3.png" height="40%" width="80%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_4.png" height="40%" width="80%" />
 </center>
 参照任务四，再加了下面两组实验：<br>
 实验2-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）**bluestore_shard_finishers=`true`**<br>
@@ -187,7 +187,7 @@ application not enabled on 1 pool(s)
 <center>
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_1.png">
 </center>
-**root@deph-testebs-ssd015.py:/etc/ceph$ vim ceph.conf**<br>
+root@deph-testebs-ssd015.py:/etc/ceph$ **vim ceph.conf**<br>
 osd_op_num_shards=4
 #### 4.2 osd_op_num_shards参数分析
 阅读ceph源码，查看**osd_op_num_shards**参数的计算源码，如下所示（主要看第二幅图）：<br>
@@ -249,7 +249,7 @@ osd_op_num_shards=4
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_9.png">
 	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task4_10.png">
 </center>
-#### 5.5 结果分析及总结
+#### 4.5 结果分析及总结
 由上图可以看出，五组实验的各四小组实验结果的IOPS都相差不大，参数**osd_op_num_shards**效果不明显。<br>
 （1）当1-image时，5组实验中，**osd_op_num_shards**默认参数的IOPS最高，性能最好。<br>
 （2）当8-image时，各组实验都不差，默认参数第二高，表示调参没起到效果。<br>
