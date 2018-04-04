@@ -53,8 +53,8 @@ application not enabled on 1 pool(s)
 实验1-1：两个客户端并发4k随机写同一个image的相同位置(offset)（分区相同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下：
 <center>
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="20%" width="80%" />
-	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="20%" width="80%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_1.png" height="200" width="80%" />
+	<img src="/img/2018-04-01-optimize-parameter-from-bluestore/task2_2.png" height="200" width="80%" />
 </center>
 实验1-2：两个客户端并发4k随机写同一个image的不同位置(offset)（分区不同）**bluestore_shard_finishers=`false`**<br>
 两个客户端fio配置文件如下(创建image 时，每个image设置的为20G)：
