@@ -12,7 +12,7 @@ tags:
 > 首先重新编译ceph，在debug模式下，使用gdb来调试rbd的运行过程
 
 ## 编译安装ceph
-参照ceph的github[官方教程(https://github.com/ceph/ceph)<br>
+参照ceph的github[官方教程](https://github.com/ceph/ceph)<br>
 **$git clone git://github.com/ceph/ceph**<br>
 **$git submodule update --init --recursive**<br>
 checkout到v12.2.2<br>
